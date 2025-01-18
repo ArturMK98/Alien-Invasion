@@ -42,14 +42,29 @@ class AlienInvasion:
         # Start Alien Invasion in an inactive state
         self.game_active = False
         self.waiting_for_difficulty = False
+        self.game_over = False
 
         # Make the play button
         self.play_button = Button(self, "Play")
+
+        # Make the restart button
+        self.restart_button = Button(self, "Restart")
+
+        # Make the quit button
+        self.quit_button = Button(self, "Quit", y_offset=80)
 
         # Make difficulty level buttons
         self.easy_button = Button(self, "Easy")
         self.medium_button = Button(self, "Medium", y_offset=80)
         self.hard_button = Button(self, "Hard", y_offset=160)
+
+        # Game over message
+        self.game_over_font = pygame.font.SysFont(None, 72)
+        self.game_over_image = self.game_over_font.render("Game Over", 
+                                                          True, (255, 0, 0))
+        self.game_over_rect = self.game_over_image.get_rect()
+        self.game_over_rect.center = self.screen.get_rect().center
+        self.game_over_rect.y -= 100
 
     
     def run_game(self):
@@ -77,10 +92,13 @@ class AlienInvasion:
                 self._check_keyup_events(event)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if not self.game_active and not self.waiting_for_difficulty:
+                if not self.game_active and not self.waiting_for_difficulty and not self.game_over:
                     self._check_play_button(mouse_pos)
                 elif self.waiting_for_difficulty:
                     self._check_difficulty_buttons(mouse_pos)
+                elif self.game_over:
+                    self._check_restart_button(mouse_pos)
+                    self._check_quit_button(mouse_pos)
 
     
     def _check_play_button(self,mouse_pos=None, p_pressed=False):
@@ -91,6 +109,21 @@ class AlienInvasion:
 
         if play_button_clicked or p_pressed:
                 self.waiting_for_difficulty = True
+                
+
+    def _check_restart_button(self, mouse_pos):
+        """Restart the game when the player clicks restart"""
+        restart_button_clicked = self.restart_button.rect.collidepoint(
+                                                                    mouse_pos)
+        if restart_button_clicked:
+            self._restart_game()
+
+    
+    def _check_quit_button(self, mouse_pos):
+        """Quit the game when the player clicks quit"""
+        quit_button_clicked = self.quit_button.rect.collidepoint(mouse_pos)
+        if quit_button_clicked:
+            sys.exit()
 
 
     def _check_keydown_events(self, event):
@@ -105,7 +138,16 @@ class AlienInvasion:
             sys.exit()
         elif event.key == pygame.K_p and not self.game_active:
             self._check_play_button(p_pressed=True)
+        elif event.key == pygame.K_r and self.game_over:
+            self._restart_game()
 
+
+    def _restart_game(self):
+        """Restart the game"""
+        self.game_over = False
+        self.waiting_for_difficulty = True
+        pygame.mouse.set_visible(True)
+        
 
     def _check_difficulty_buttons(self, mouse_pos):
         """Check if the player has selected a difficulty"""
@@ -227,13 +269,14 @@ class AlienInvasion:
             # Decrement ships left and update scoreboard
             self.stats.ships_left -= 1
             self.scoreboard.prep_ships()
-            
+
             self._reset_level()
 
             # Pause
             sleep(0.5)
         else:
             self.game_active = False
+            self.game_over = True
             pygame.mouse.set_visible(True)
 
     
@@ -294,7 +337,7 @@ class AlienInvasion:
         self.scoreboard.show_game_info()
 
         # Draw play button if game is inactive and not waiting for difficulty
-        if not self.game_active and not self.waiting_for_difficulty:
+        if not self.game_active and not self.waiting_for_difficulty and not self.game_over:
             self.play_button.draw_button()
 
         # Draw difficulty level buttons if waiting for difficulty
@@ -302,6 +345,11 @@ class AlienInvasion:
             self.easy_button.draw_button()
             self.medium_button.draw_button()
             self.hard_button.draw_button()
+
+        if self.game_over:
+            self.screen.blit(self.game_over_image, self.game_over_rect)
+            self.restart_button.draw_button()
+            self.quit_button.draw_button()
 
         pygame.display.flip()
 
