@@ -130,6 +130,7 @@ class AlienInvasion:
         #self.settings.initialize_dynamic_settings()
         self.stats.reset_stats()
         self.scoreboard.prep_score()
+        self.scoreboard.prep_level()
         self.game_active = True
         self.waiting_for_difficulty = False
         self._reset_level()
@@ -183,6 +184,10 @@ class AlienInvasion:
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_values()
+
+            # Increase level
+            self.stats.level += 1
+            self.scoreboard.prep_level()
 
 
     def _update_aliens(self):
