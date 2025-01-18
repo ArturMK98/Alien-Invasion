@@ -41,3 +41,17 @@ class Settings:
         self.bullet_speed *= self.speedup_scale
         self.alien_speed *= self.speedup_scale
 
+
+    def set_easy_mode(self):
+        """Set settings for easy mode"""
+        self.alien_speed = 1.0
+        
+
+    def set_medium_mode(self):
+        """Set settings for medium mode"""
+        self.alien_speed = 2.0
+
+
+    def set_hard_mode(self):
+        """Set settings for hard mode"""
+        self.alien_speed = 3.0
