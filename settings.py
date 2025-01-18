@@ -52,7 +52,7 @@ class Settings:
 
     def set_easy_mode(self):
         """Set settings for easy mode"""
-        self.alien_speed = 1.0
+        self.alien_speed = 50.0
         
 
     def set_medium_mode(self):
