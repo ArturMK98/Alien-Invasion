@@ -130,6 +130,7 @@ class AlienInvasion:
         #self.settings.initialize_dynamic_settings()
         self.stats.reset_stats()
         self.scoreboard.prep_score()
+        self.scoreboard.prep_ships()
         self.scoreboard.prep_level()
         self.game_active = True
         self.waiting_for_difficulty = False
@@ -223,9 +224,10 @@ class AlienInvasion:
     def _ship_hit(self):
         """Respond to the ship being hit by an alien"""
         if self.stats.ships_left > 0:
-            # Decrement ships left
+            # Decrement ships left and update scoreboard
             self.stats.ships_left -= 1
-
+            self.scoreboard.prep_ships()
+            
             self._reset_level()
 
             # Pause
@@ -289,7 +291,7 @@ class AlienInvasion:
         self.aliens.draw(self.screen)
 
         # Draw score information
-        self.scoreboard.show_score()
+        self.scoreboard.show_game_info()
 
         # Draw play button if game is inactive and not waiting for difficulty
         if not self.game_active and not self.waiting_for_difficulty:
