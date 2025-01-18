@@ -59,7 +59,7 @@ class AlienInvasion:
         self.hard_button = Button(self, "Hard", y_offset=160)
 
         # Game over message
-        self.game_over_font = pygame.font.SysFont(None, 72)
+        self.game_over_font = pygame.font.SysFont('Comic Sans MS', 60)
         self.game_over_image = self.game_over_font.render("Game Over", 
                                                           True, (255, 0, 0))
         self.game_over_rect = self.game_over_image.get_rect()
