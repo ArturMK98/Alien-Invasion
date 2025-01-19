@@ -53,18 +53,18 @@ class AlienInvasion:
         # Make the quit button
         self.quit_button = Button(self, "Quit", y_offset=80)
 
+        
+
         # Make difficulty level buttons
         self.easy_button = Button(self, "Easy")
         self.medium_button = Button(self, "Medium", y_offset=80)
         self.hard_button = Button(self, "Hard", y_offset=160)
 
+        # Prepare the 'Difficulty' text
+        self._prep_difficulty_text()
+
         # Game over message
-        self.game_over_font = pygame.font.SysFont('Comic Sans MS', 60)
-        self.game_over_image = self.game_over_font.render("Game Over", 
-                                                          True, (255, 0, 0))
-        self.game_over_rect = self.game_over_image.get_rect()
-        self.game_over_rect.center = self.screen.get_rect().center
-        self.game_over_rect.y -= 100
+        self._prep_game_over_message()
 
     
     def run_game(self):
@@ -172,6 +172,7 @@ class AlienInvasion:
         #self.settings.initialize_dynamic_settings()
         self.stats.reset_stats()
         self.scoreboard.prep_score()
+        self.scoreboard.prep_high_score()
         self.scoreboard.prep_ships()
         self.scoreboard.prep_level()
         self.game_active = True
@@ -316,6 +317,36 @@ class AlienInvasion:
             current_y += 2 * alien_height
     
 
+    def _prep_difficulty_text(self):
+        """Prepare the 'Difficulty' text"""
+        self.difficulty_font = pygame.font.SysFont('Comic Sans MS', 48)
+        self.difficulty_image = self.difficulty_font.render("Difficulty", 
+                                                            True, (0, 0, 0))
+        self.difficulty_rect = self.difficulty_image.get_rect()
+        self.difficulty_rect.centerx = self.screen.get_rect().centerx
+        self.difficulty_rect.top = self.easy_button.rect.top - 80  
+
+
+    def _prep_game_over_message(self):
+        """Prepare the 'Game Over' message"""
+        self.game_over_font = pygame.font.SysFont('Comic Sans MS', 60)
+        self.game_over_image = self.game_over_font.render("Game Over", 
+                                                          True, (255, 0, 0))
+        self.game_over_rect = self.game_over_image.get_rect()
+        self.game_over_rect.center = self.screen.get_rect().center
+        self.game_over_rect.y -= 100
+
+    
+    def _draw_difficulty_text(self):
+        """Draw the 'Difficulty' text to the screen"""
+        self.screen.blit(self.difficulty_image, self.difficulty_rect)
+
+
+    def _draw_game_over_message(self):
+        """Draw the 'Game Over' message to the screen"""
+        self.screen.blit(self.game_over_image, self.game_over_rect)
+
+
     def _create_alien(self, x_position, y_position):
         """Create an alien and place it in the fleet"""
         new_alien = Alien(self)
@@ -342,12 +373,13 @@ class AlienInvasion:
 
         # Draw difficulty level buttons if waiting for difficulty
         if self.waiting_for_difficulty:
+            self._draw_difficulty_text()
             self.easy_button.draw_button()
             self.medium_button.draw_button()
             self.hard_button.draw_button()
 
         if self.game_over:
-            self.screen.blit(self.game_over_image, self.game_over_rect)
+            self._draw_game_over_message()
             self.restart_button.draw_button()
             self.quit_button.draw_button()
 

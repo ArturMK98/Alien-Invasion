@@ -40,6 +40,9 @@ class Settings:
 
         # Scoring settings
         self.alien_points = 50
+
+        # Difficulty setting
+        self.difficulty = 'medium'
         
 
     def increase_values(self):
@@ -53,13 +56,16 @@ class Settings:
     def set_easy_mode(self):
         """Set settings for easy mode"""
         self.alien_speed = 2.0
+        self.difficulty = 'easy'
         
 
     def set_medium_mode(self):
         """Set settings for medium mode"""
         self.alien_speed = 4.0
+        self.difficulty = 'medium'
 
 
     def set_hard_mode(self):
         """Set settings for hard mode"""
         self.alien_speed = 6.0
+        self.difficulty = 'hard'

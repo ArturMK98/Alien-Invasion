@@ -7,8 +7,8 @@ class GameStats:
         """Initialize stats"""
         self.settings = ai_game.settings
         self.reset_stats()
-        # High score should never be reset
-        self.high_score = self.load_high_score()
+        # High scores should never be reset
+        self.high_scores = self.load_high_scores()
 
     
     def reset_stats(self):
@@ -18,16 +18,16 @@ class GameStats:
         self.level = 1
 
 
-    def load_high_score(self):
-        """Load the high score from a JSON file."""
+    def load_high_scores(self):
+        """Load the high scores from a JSON file."""
         try:
-            with open('high_score.json', 'r') as file:
+            with open('high_scores.json', 'r') as file:
                 return json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
-            return 0
+            return {'easy': 0, 'medium': 0, 'hard': 0}
 
 
-    def save_high_score(self):
+    def save_high_scores(self):
         """Save the high score to a JSON file."""
-        with open('high_score.json', 'w') as file:
-            json.dump(self.high_score, file)
+        with open('high_scores.json', 'w') as file:
+            json.dump(self.high_scores, file)
