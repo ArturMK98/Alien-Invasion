@@ -33,7 +33,7 @@ class Alien(Sprite):
         self.x = float(self.rect.x)
 
         # Animation settings
-        self.animation_speed = 0.3
+        self.animation_speed = 0.2
         self.last_update = pygame.time.get_ticks()
 
 

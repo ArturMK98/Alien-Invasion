@@ -29,6 +29,12 @@ class AlienInvasion:
             (self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
 
+        # Load the background image
+        self.bg_image = pygame.image.load('assets/background.bmp')
+        self.bg_image = pygame.transform.scale(
+            self.bg_image, (
+                self.settings.screen_width, self.settings.screen_height))
+
         # Create an instance to store game stats and create a scoreboard
         self.stats = GameStats(self)
         self.scoreboard = Scoreboard(self)
@@ -303,7 +309,7 @@ class AlienInvasion:
         """Create a fleet of aliens"""
         # Create an alien and find the number of aliens in a row
         # Spacing between each alien is equal to one alien width
-        alien = Alien(self, 'assets/alien_spritesheet1.png', 4)  # Assuming 4 frames for the first sprite sheet
+        alien = Alien(self, 'assets/alan.png', 6)  # Assuming 4 frames for the first sprite sheet
         alien_width, alien_height = alien.rect.size
         available_space_x = self.settings.screen_width - (2 * alien_width)
         number_aliens_x = available_space_x // (2 * alien_width)
@@ -372,7 +378,7 @@ class AlienInvasion:
 
     def _update_screen(self):
         """Update the images on the screen, and flip to the new screen"""
-        self.screen.fill(self.settings.bg_colour)
+        self.screen.blit(self.bg_image, (0,0))
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.ship.blitme()
