@@ -11,8 +11,12 @@ class Alien(Sprite):
         self.settings = ai_game.settings
 
         # Load the alien image and set its rect attribute
-        self.image = pygame.image.load('assets/Alan.png')
-        self.frames = self._extract_frames(self.sprite_sheet, 4)
+        self.image = pygame.image.load('assets/alan.png')
+        self.frames = self._extract_frames(self.image, 6)
+
+        # Scale the frames
+        self.frames = [
+            pygame.transform.scale(frame, (self.settings.alien_width, self.settings.alien_height)) for frame in self.frames]
 
         # Set the initial frame
         self.current_frame = 0
@@ -27,20 +31,20 @@ class Alien(Sprite):
         self.x = float(self.rect.x)
 
         # Animation settings
-        self.animation_speed = 0.1
+        self.animation_speed = 0.3
         self.last_update = pygame.time.get_ticks()
 
 
-    def _extract_frames(self, sprite_sheet, num_frames):
+    def _extract_frames(self, image, num_frames):
         """Extract frames from a sprite sheet"""
         frames = []
-        sheet_rect = sprite_sheet.get_rect()
+        sheet_rect = image.get_rect()
         frame_width = sheet_rect.width // num_frames
         frame_height = sheet_rect.height
 
         for i in range(num_frames):
-            frame = sprite_sheet.subsurface(pygame.Rect(
-                i * frame_width, 0, frame_width, frame_height))
+            frame = image.subsurface(
+                pygame.Rect(i * frame_width, 0, frame_width, frame_height))
             frames.append(frame)
 
         return frames
@@ -59,7 +63,7 @@ class Alien(Sprite):
         self.rect.x = self.x
 
     
-    def _animate(self):  # New method
+    def _animate(self):
         """Animate the alien"""
         now = pygame.time.get_ticks()
         if now - self.last_update > self.animation_speed * 1000:
