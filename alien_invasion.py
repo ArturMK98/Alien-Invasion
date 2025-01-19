@@ -1,9 +1,11 @@
 import sys
-from time import sleep
 import pygame
+from time import sleep
+from random import choice
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien_bullet import AlienBullet
 from alien import Alien
 from game_stats import GameStats
 from scoreboard import Scoreboard
@@ -42,6 +44,7 @@ class AlienInvasion:
         # Create a ship, a group of bullets, and a group of aliens
         self.ship = Ship(self, 'assets/player_ship.png', 3)
         self.bullets = pygame.sprite.Group()
+        self.alien_bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self._create_fleet()
 
@@ -58,8 +61,6 @@ class AlienInvasion:
 
         # Make the quit button
         self.quit_button = Button(self, "Quit", y_offset=80)
-
-        
 
         # Make difficulty level buttons
         self.easy_button = Button(self, "Easy")
@@ -81,6 +82,7 @@ class AlienInvasion:
             if self.game_active:
                 self.ship.update()
                 self._update_bullets()
+                self._update_alien_bullets()
                 self._update_aliens()
 
             self._update_screen()
@@ -200,10 +202,18 @@ class AlienInvasion:
     def _fire_bullet(self):
         """Create a new bullet and add it to the bullets group"""
         if len(self.bullets) < self.settings.bullets_allowed:
-            new_bullet = Bullet(self, 'assets/player_bullet.png', 4)
+            new_bullet = Bullet(self, 'assets/bullet_player.png', 4)
             self.bullets.add(new_bullet)
 
     
+    def _fire_alien_bullet(self, alien):
+        """Fire a bullet from an alien"""
+        # Allow only one alien to shoot at a time
+        if len(self.alien_bullets) < 1:
+            new_bullet = AlienBullet(self, alien, 'assets/bullet_alien.png', 4) 
+            self.alien_bullets.add(new_bullet)
+
+
     def _update_bullets(self):
         """Update position of bullets and get rid of old bullets"""
         # Update bullet positions
@@ -245,12 +255,32 @@ class AlienInvasion:
         self._check_fleet_edges()
         self.aliens.update()
 
+        # Check if any aliens can fire a bullet
+        shooting_aliens = [alien for alien in self.aliens.sprites() if alien.can_shoot(self.aliens)]
+        if shooting_aliens and len(self.alien_bullets) < 1:
+            shooting_alien = choice(shooting_aliens)
+            self._fire_alien_bullet(shooting_alien)
+
         # Look for alien-ship collisions
         if pygame.sprite.spritecollideany(self.ship, self.aliens):
             self._ship_hit()
 
         # Look for aliens hitting the bottom of the screen
         self._check_aliens_bottom()
+
+    
+    def _update_alien_bullets(self):
+        """Update the position of alien bullets and get rid of old bullets"""
+        self.alien_bullets.update()
+
+        # Get rid of bullets that have disappeared
+        for bullet in self.alien_bullets.copy():
+            if bullet.rect.top >= self.settings.screen_height:
+                self.alien_bullets.remove(bullet)
+
+        # Check for bullet-ship collisions
+        if pygame.sprite.spritecollideany(self.ship, self.alien_bullets):
+            self._ship_hit()
 
 
     def _check_fleet_edges(self):
@@ -292,6 +322,7 @@ class AlienInvasion:
         # Get rid of any remaining bullets and aliens
         self.bullets.empty()
         self.aliens.empty()
+        self.alien_bullets.empty()
 
         # Create a new fleet and center ship
         self._create_fleet()
@@ -382,6 +413,8 @@ class AlienInvasion:
         self.screen.blit(self.bg_image, (0,0))
 
         for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
+        for bullet in self.alien_bullets.sprites():
             bullet.draw_bullet()
         self.ship.blitme()
         self.aliens.draw(self.screen)

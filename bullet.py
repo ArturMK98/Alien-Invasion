@@ -44,7 +44,8 @@ class Bullet(Sprite):
         frame_height = sheet_rect.height
 
         for i in range(num_frames):
-            frame = image.subsurface(pygame.Rect(i * frame_width, 0, frame_width, frame_height))
+            frame = image.subsurface(
+                pygame.Rect(i * frame_width, 0, frame_width, frame_height))
             frames.append(frame)
 
         return frames

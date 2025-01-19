@@ -25,6 +25,10 @@ class Alien(Sprite):
         self.image = self.frames[self.current_frame]
         self.rect = self.image.get_rect()
 
+        # Adjust the rect for better collision detection
+        self.rect.inflate_ip(0, -12)
+        
+
         # Start each new alien near the top of the screen
         self.rect.x = self.rect.width
         self.rect.y = self.rect.height
@@ -63,6 +67,7 @@ class Alien(Sprite):
         self._animate()
         self.x += self.settings.alien_speed * self.settings.fleet_direction
         self.rect.x = self.x
+        self._draw_hitbox()
 
     
     def _animate(self):
@@ -72,6 +77,19 @@ class Alien(Sprite):
             self.last_update = now
             self.current_frame = (self.current_frame + 1) % len(self.frames)
             self.image = self.frames[self.current_frame]
+
+    
+    def can_shoot(self, aliens):
+        """Check if this alien can fire a bullet"""
+        for alien in aliens:
+            if alien.rect.y > self.rect.y and alien.rect.x == self.rect.x:
+                return False
+        return True
+    
+
+    def _draw_hitbox(self):
+        """Draw the hitbox for visualization"""
+        pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 1)
 
     
 
