@@ -4,19 +4,21 @@ from pygame.sprite import Sprite
 class Alien(Sprite):
     """A class to represent a single alien in the fleet"""
 
-    def __init__(self, ai_game):
+    def __init__(self, ai_game, sprite_sheet_path, num_frames):
         """Initialize the alien and set its starting position"""
         super().__init__()
         self.screen = ai_game.screen
         self.settings = ai_game.settings
 
         # Load the alien image and set its rect attribute
-        self.image = pygame.image.load('assets/alan.png')
-        self.frames = self._extract_frames(self.image, 6)
+        self.image = pygame.image.load(sprite_sheet_path)
+        self.frames = self._extract_frames(self.image, num_frames)
 
         # Scale the frames
         self.frames = [
-            pygame.transform.scale(frame, (self.settings.alien_width, self.settings.alien_height)) for frame in self.frames]
+            pygame.transform.scale(
+                frame, (self.settings.alien_width, self.settings.alien_height)
+                ) for frame in self.frames]
 
         # Set the initial frame
         self.current_frame = 0
