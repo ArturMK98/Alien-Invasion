@@ -10,6 +10,8 @@ class Settings:
 
         # Ship settings
         self.ship_limit = 3
+        self.ship_width = 60
+        self.ship_height = 60
 
         # Bullet settings
         self.bullet_width = 3

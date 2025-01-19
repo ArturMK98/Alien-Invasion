@@ -40,7 +40,7 @@ class AlienInvasion:
         self.scoreboard = Scoreboard(self)
 
         # Create a ship, a group of bullets, and a group of aliens
-        self.ship = Ship(self)
+        self.ship = Ship(self, 'assets/player_ship.png', 3)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self._create_fleet()
@@ -349,8 +349,8 @@ class AlienInvasion:
     def _prep_difficulty_text(self):
         """Prepare the 'Difficulty' text"""
         self.difficulty_font = pygame.font.SysFont('Comic Sans MS', 48)
-        self.difficulty_image = self.difficulty_font.render("Difficulty", 
-                                                            True, (0, 0, 0))
+        self.difficulty_image = self.difficulty_font.render(
+            "Difficulty", True, (255, 255, 255))
         self.difficulty_rect = self.difficulty_image.get_rect()
         self.difficulty_rect.centerx = self.screen.get_rect().centerx
         self.difficulty_rect.top = self.easy_button.rect.top - 80  
@@ -378,7 +378,9 @@ class AlienInvasion:
 
     def _update_screen(self):
         """Update the images on the screen, and flip to the new screen"""
+        # Draw background image
         self.screen.blit(self.bg_image, (0,0))
+
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.ship.blitme()
