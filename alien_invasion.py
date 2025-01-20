@@ -417,6 +417,10 @@ class AlienInvasion:
         for bullet in self.alien_bullets.sprites():
             bullet.draw_bullet()
         self.ship.blitme()
+
+        for alien in self.aliens.sprites():
+            alien._draw_hitbox()
+        
         self.aliens.draw(self.screen)
 
         # Draw score information

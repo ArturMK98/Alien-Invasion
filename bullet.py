@@ -30,6 +30,7 @@ class Bullet(Sprite):
         
         # Store the bullet's position as a float
         self.y = float(self.rect.y)
+        print(self.rect)
 
         # Animation settings
         self.animation_speed = 0.1  # Adjust as needed
@@ -64,7 +65,7 @@ class Bullet(Sprite):
 
     def _animate(self):
         """Animate the bullet"""
-        now = pygame.time.get_ticks()
+        now = pygame.time.get_ticks() 
         if now - self.last_update > self.animation_speed * 1000:
             self.last_update = now
             self.current_frame = (self.current_frame + 1) % len(self.frames)
@@ -74,3 +75,9 @@ class Bullet(Sprite):
     def draw_bullet(self):
         """Draw the bullet to the screen"""
         self.screen.blit(self.image, self.rect)
+        self._draw_hitbox()
+
+
+    def _draw_hitbox(self):
+        """Draw the hitbox for visualization"""
+        pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 1)

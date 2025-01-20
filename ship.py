@@ -88,9 +88,14 @@ class Ship(Sprite):
     def blitme(self):
         """Draw the ship at its current location"""
         self.screen.blit(self.image, self.rect)
+        self._draw_hitbox()
 
     
     def center_ship(self):
         """Center the ship on the screen"""
         self.rect.midbottom = self.screen_rect.midbottom
         self.x = float(self.rect.x)
+
+    def _draw_hitbox(self):
+        """Draw the hitbox for visualization"""
+        pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 1)  # Red color with 1 pixel width

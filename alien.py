@@ -25,10 +25,6 @@ class Alien(Sprite):
         self.image = self.frames[self.current_frame]
         self.rect = self.image.get_rect()
 
-        # Adjust the rect for better collision detection
-        self.rect.inflate_ip(0, -12)
-        
-
         # Start each new alien near the top of the screen
         self.rect.x = self.rect.width
         self.rect.y = self.rect.height
