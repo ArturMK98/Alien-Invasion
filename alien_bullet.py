@@ -12,7 +12,6 @@ class AlienBullet(Bullet):
         self.frames = self._scale_frames(self.frames, 
                                          self.settings.alien_bullet_width, 
                                          self.settings.alien_bullet_height)
-        
 
         # Set the initial frame
         self.image = self.frames[self.current_frame]

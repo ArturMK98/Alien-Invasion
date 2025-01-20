@@ -45,6 +45,7 @@ class Bullet(Sprite):
         """Scale the frames to the desired size"""
         return [pygame.transform.scale(frame, (bullet_width, bullet_height)) for frame in frames]
     
+    
     def _extract_frames(self, image, num_frames):
         """Extract individual frames from the sprite sheet"""
         frames = []

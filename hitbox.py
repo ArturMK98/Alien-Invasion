@@ -8,9 +8,11 @@ class Hitbox:
         self.rect = pygame.Rect(0, 0, width, height)
         self.rect.center = center
 
+
     def update(self, center):
         """Update the hitbox position"""
         self.rect.center = center
+
 
     def draw(self, screen):
         """Draw the hitbox for visualization"""
