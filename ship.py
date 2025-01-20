@@ -1,5 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
+from hitbox import Hitbox
 
 
 class Ship(Sprite):
@@ -28,6 +29,11 @@ class Ship(Sprite):
         self.image = self.frames[self.current_frame]
         self.rect = self.image.get_rect()
 
+        # Create a separate hitbox with custom size
+        self.hitbox = Hitbox(self.settings.ship_width * 0.66, 
+                             self.settings.ship_height * 0.66, 
+                             self.rect.center) 
+
         # Start each new ship at the bottom center of the screen
         self.rect.midbottom = self.screen_rect.midbottom
 
@@ -41,6 +47,7 @@ class Ship(Sprite):
         # Animation settings
         self.animation_speed = 0.2
         self.last_update = pygame.time.get_ticks()
+
 
     def _extract_frames(self, sprite_sheet, num_frames):  # New method to extract frames
         """Extract individual frames from the sprite sheet"""
@@ -72,6 +79,9 @@ class Ship(Sprite):
         # Update rect object from self.x
         self.rect.x = self.x
 
+        # Update the hitbox position
+        self.hitbox.update(self.rect.center)
+
         # Update image to the current frame
         self.image = self.frames[self.current_frame]
 
@@ -88,7 +98,7 @@ class Ship(Sprite):
     def blitme(self):
         """Draw the ship at its current location"""
         self.screen.blit(self.image, self.rect)
-        self._draw_hitbox()
+        #self.hitbox.draw(self.screen)
 
     
     def center_ship(self):
@@ -96,6 +106,3 @@ class Ship(Sprite):
         self.rect.midbottom = self.screen_rect.midbottom
         self.x = float(self.rect.x)
 
-    def _draw_hitbox(self):
-        """Draw the hitbox for visualization"""
-        pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 1)  # Red color with 1 pixel width

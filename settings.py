@@ -15,8 +15,9 @@ class Settings:
         # Bullet settings
         self.bullet_width = 20
         self.bullet_height = 60
-        self.bullet_colour = (60, 60, 60)
         self.bullets_allowed = 3
+        self.alien_bullet_width = 50
+        self.alien_bullet_height = 50
 
         # Alien settings
         self.alien_width = 70
@@ -34,8 +35,8 @@ class Settings:
     
     def initialize_dynamic_settings(self):
         """Initialize settings that change throughout the game"""
-        self.ship_speed = 4.5
-        self.bullet_speed = 2.5
+        self.ship_speed = 3.5
+        self.bullet_speed = 4.5
         self.alien_speed = 2.5
 
         # Fleet direction of 1 represents right; -1 represents left
@@ -58,7 +59,7 @@ class Settings:
 
     def set_easy_mode(self):
         """Set settings for easy mode"""
-        self.alien_speed = 0.0
+        self.alien_speed = 2.0
         self.difficulty = 'easy'
         
 

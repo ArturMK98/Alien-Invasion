@@ -231,7 +231,8 @@ class AlienInvasion:
         """Respond to bullet-alien collisions"""
         # Remove any bullets and aliens that have collided
         collisions = pygame.sprite.groupcollide(
-            self.bullets, self.aliens, True, True)
+            self.bullets, self.aliens, 
+            True, True,collided=self._hitbox_collision)
         
         if collisions:
             for aliens in collisions.values():
@@ -262,7 +263,8 @@ class AlienInvasion:
             self._fire_alien_bullet(shooting_alien)
 
         # Look for alien-ship collisions
-        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+        if pygame.sprite.spritecollideany(
+            self.ship, self.aliens, collided=self._hitbox_collision):
             self._ship_hit()
 
         # Look for aliens hitting the bottom of the screen
@@ -279,8 +281,14 @@ class AlienInvasion:
                 self.alien_bullets.remove(bullet)
 
         # Check for bullet-ship collisions
-        if pygame.sprite.spritecollideany(self.ship, self.alien_bullets):
+        if pygame.sprite.spritecollideany(
+            self.ship, self.alien_bullets, collided=self._hitbox_collision):
             self._ship_hit()
+
+    
+    def _hitbox_collision(self, sprite1, sprite2):
+        """Check for collisions between hitboxes"""
+        return sprite1.hitbox.rect.colliderect(sprite2.hitbox.rect)
 
 
     def _check_fleet_edges(self):
@@ -340,7 +348,7 @@ class AlienInvasion:
         """Create a fleet of aliens"""
         # Create an alien and find the number of aliens in a row
         # Spacing between each alien is equal to one alien width
-        alien = Alien(self, 'assets/alan.png', 6)  # Assuming 4 frames for the first sprite sheet
+        alien = Alien(self, 'assets/alan.png', 6)
         alien_width, alien_height = alien.rect.size
         available_space_x = self.settings.screen_width - (2 * alien_width)
         number_aliens_x = available_space_x // (2 * alien_width)
@@ -418,9 +426,6 @@ class AlienInvasion:
             bullet.draw_bullet()
         self.ship.blitme()
 
-        for alien in self.aliens.sprites():
-            alien._draw_hitbox()
-        
         self.aliens.draw(self.screen)
 
         # Draw score information

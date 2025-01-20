@@ -1,5 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
+from hitbox import Hitbox
 
 class Alien(Sprite):
     """A class to represent a single alien in the fleet"""
@@ -24,6 +25,11 @@ class Alien(Sprite):
         self.current_frame = 0
         self.image = self.frames[self.current_frame]
         self.rect = self.image.get_rect()
+
+        # Create a separate hitbox with custom size
+        self.hitbox = Hitbox(self.settings.alien_width * 0.86, 
+                             self.settings.alien_height * 0.71, 
+                             self.rect.center)
 
         # Start each new alien near the top of the screen
         self.rect.x = self.rect.width
@@ -63,7 +69,7 @@ class Alien(Sprite):
         self._animate()
         self.x += self.settings.alien_speed * self.settings.fleet_direction
         self.rect.x = self.x
-        self._draw_hitbox()
+        self.hitbox.update(self.rect.center)
 
     
     def _animate(self):
@@ -81,11 +87,6 @@ class Alien(Sprite):
             if alien.rect.y > self.rect.y and alien.rect.x == self.rect.x:
                 return False
         return True
-    
-
-    def _draw_hitbox(self):
-        """Draw the hitbox for visualization"""
-        pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 1)
 
     
 
