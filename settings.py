@@ -30,6 +30,10 @@ class Settings:
         # How quickly the point values increase
         self.score_scale = 1.5
 
+        # Death animation settings
+        self.death_effect_width = 70
+        self.death_effect_height = 70
+
         self.initialize_dynamic_settings()
 
     

@@ -7,6 +7,7 @@ from ship import Ship
 from bullet import Bullet
 from alien_bullet import AlienBullet
 from alien import Alien
+from death_effect import DeathEffect
 from game_stats import GameStats
 from scoreboard import Scoreboard
 from button import Button
@@ -46,6 +47,7 @@ class AlienInvasion:
         self.bullets = pygame.sprite.Group()
         self.alien_bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
+        self.alien_deaths = pygame.sprite.Group()
         self._create_fleet()
 
         # Start Alien Invasion in an inactive state
@@ -84,6 +86,7 @@ class AlienInvasion:
                 self._update_bullets()
                 self._update_alien_bullets()
                 self._update_aliens()
+                self.alien_deaths.update()
 
             self._update_screen()
             self.clock.tick(100)
@@ -236,6 +239,9 @@ class AlienInvasion:
         
         if collisions:
             for aliens in collisions.values():
+                for alien in aliens:
+                    death_effect = DeathEffect(self, alien.rect.center, 'assets/sparkle.png', 4)
+                    self.alien_deaths.add(death_effect)
                 self.stats.score += self.settings.alien_points * len(aliens)
             self.scoreboard.prep_score()
             self.scoreboard.check_high_score()
@@ -424,6 +430,9 @@ class AlienInvasion:
             bullet.draw_bullet()
         for bullet in self.alien_bullets.sprites():
             bullet.draw_bullet()
+        for death_effect in self.alien_deaths.sprites():
+            death_effect.draw()
+            
         self.ship.blitme()
 
         self.aliens.draw(self.screen)
