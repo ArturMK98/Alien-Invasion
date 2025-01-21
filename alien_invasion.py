@@ -47,7 +47,7 @@ class AlienInvasion:
         self.bullets = pygame.sprite.Group()
         self.alien_bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
-        self.alien_deaths = pygame.sprite.Group()
+        self.death_effects = pygame.sprite.Group()
         self._create_fleet()
 
         # Start Alien Invasion in an inactive state
@@ -86,7 +86,7 @@ class AlienInvasion:
                 self._update_bullets()
                 self._update_alien_bullets()
                 self._update_aliens()
-                self.alien_deaths.update()
+                self.death_effects.update()
 
             self._update_screen()
             self.clock.tick(100)
@@ -240,8 +240,12 @@ class AlienInvasion:
         if collisions:
             for aliens in collisions.values():
                 for alien in aliens:
-                    death_effect = DeathEffect(self, alien.rect.center, 'assets/sparkle.png', 4)
-                    self.alien_deaths.add(death_effect)
+                    death_effect = DeathEffect(self, 
+                                               alien.rect.center, 
+                                               'assets/sparkle.png', 4, 
+                                               self.settings.alien_width, 
+                                               self.settings.alien_height)
+                    self.death_effects.add(death_effect)
                 self.stats.score += self.settings.alien_points * len(aliens)
             self.scoreboard.prep_score()
             self.scoreboard.check_high_score()
@@ -263,7 +267,8 @@ class AlienInvasion:
         self.aliens.update()
 
         # Check if any aliens can fire a bullet
-        shooting_aliens = [alien for alien in self.aliens.sprites() if alien.can_shoot(self.aliens)]
+        shooting_aliens = [
+            alien for alien in self.aliens.sprites() if alien.can_shoot(self.aliens)]
         if shooting_aliens and len(self.alien_bullets) < 1:
             shooting_alien = choice(shooting_aliens)
             self._fire_alien_bullet(shooting_alien)
@@ -289,7 +294,9 @@ class AlienInvasion:
         # Check for bullet-ship collisions
         if pygame.sprite.spritecollideany(
             self.ship, self.alien_bullets, collided=self._hitbox_collision):
-            self._ship_hit()
+            self._ship_hit(bullet)
+
+
 
     
     def _hitbox_collision(self, sprite1, sprite2):
@@ -314,8 +321,24 @@ class AlienInvasion:
                 break
 
 
-    def _ship_hit(self):
+    def _ship_hit(self, bullet=None):
         """Respond to the ship being hit by an alien"""
+
+        # Trigger explosion animation
+        explosion = DeathEffect(self, self.ship.rect.center, 
+                                    'assets/explosion.png', 6, 
+                                    self.settings.ship_width, 
+                                    self.settings.ship_height)
+        self.death_effects.add(explosion)
+
+        self.ship.rect.midbottom = (-100, -100)
+
+        # Remove alien bullet if it hit the ship
+        if bullet:
+            self.alien_bullets.remove(bullet)
+
+        self._pause_game_for_explosion()
+
         if self.stats.ships_left > 0:
             # Decrement ships left and update scoreboard
             self.stats.ships_left -= 1
@@ -324,7 +347,7 @@ class AlienInvasion:
             self._reset_level()
 
             # Pause
-            sleep(0.5)
+            #sleep(0.5)
         else:
             self.game_active = False
             self.game_over = True
@@ -341,6 +364,14 @@ class AlienInvasion:
         # Create a new fleet and center ship
         self._create_fleet()
         self.ship.center_ship()
+
+    
+    def _pause_game_for_explosion(self):
+        """Pause the game and play the explosion animation"""
+        while any(explosion.alive() for explosion in self.death_effects):
+            self.death_effects.update()
+            self._update_screen()
+            self.clock.tick(100)
 
 
     def _change_fleet_direction(self):
@@ -430,9 +461,9 @@ class AlienInvasion:
             bullet.draw_bullet()
         for bullet in self.alien_bullets.sprites():
             bullet.draw_bullet()
-        for death_effect in self.alien_deaths.sprites():
+        for death_effect in self.death_effects.sprites():
             death_effect.draw()
-            
+
         self.ship.blitme()
 
         self.aliens.draw(self.screen)

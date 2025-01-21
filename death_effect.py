@@ -4,7 +4,7 @@ from pygame.sprite import Sprite
 class DeathEffect(Sprite):
     """A class to death effect animations"""
 
-    def __init__(self, ai_game, center, sprite_sheet_path, num_frames):
+    def __init__(self, ai_game, center, sprite_sheet_path, num_frames, width, height):
         """Initialize the explosion animation"""
         super().__init__()
         self.screen = ai_game.screen
@@ -17,8 +17,7 @@ class DeathEffect(Sprite):
         # Scale the frames if needed
         self.frames = [
             pygame.transform.scale(
-                frame, (self.settings.death_effect_width, self.settings.death_effect_height)
-                ) for frame in self.frames]
+                frame, (width, height) ) for frame in self.frames]
 
         # Set the initial frame
         self.current_frame = 0
