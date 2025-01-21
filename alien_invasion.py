@@ -85,7 +85,8 @@ class AlienInvasion:
                 self.ship.update()
                 self._update_bullets()
                 self._update_alien_bullets()
-                self._update_aliens()
+                if not self.game_over:
+                    self._update_aliens()
                 self.death_effects.update()
 
             self._update_screen()
@@ -465,7 +466,7 @@ class AlienInvasion:
             death_effect.draw()
 
         self.ship.blitme()
-
+        
         self.aliens.draw(self.screen)
 
         # Draw score information
