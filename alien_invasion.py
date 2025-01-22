@@ -1,5 +1,6 @@
 import sys
 import pygame
+from random import random
 from time import sleep
 from random import choice
 from settings import Settings
@@ -37,6 +38,13 @@ class AlienInvasion:
         self.bg_image = pygame.transform.scale(
             self.bg_image, (
                 self.settings.screen_width, self.settings.screen_height))
+        
+        # Load sound effects
+        self.ship_shoot_sound = pygame.mixer.Sound('sound_effects/shot.mp3')
+        self.alien_shoot_sounds = [
+            pygame.mixer.Sound('sound_effects/fireball_whoosh_1.mp3'),
+            pygame.mixer.Sound('sound_effects/fireball_whoosh_2.mp3')
+        ]
 
         # Create an instance to store game stats and create a scoreboard
         self.stats = GameStats(self)
@@ -208,6 +216,7 @@ class AlienInvasion:
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self, 'assets/bullet_player.png', 4)
             self.bullets.add(new_bullet)
+            self.ship_shoot_sound.play()
 
     
     def _fire_alien_bullet(self, alien):
@@ -216,6 +225,7 @@ class AlienInvasion:
         if len(self.alien_bullets) < 1:
             new_bullet = AlienBullet(self, alien, 'assets/bullet_alien.png', 4) 
             self.alien_bullets.add(new_bullet)
+            choice(self.alien_shoot_sounds).play()
 
 
     def _update_bullets(self):
@@ -270,7 +280,7 @@ class AlienInvasion:
         # Check if any aliens can fire a bullet
         shooting_aliens = [
             alien for alien in self.aliens.sprites() if alien.can_shoot(self.aliens)]
-        if shooting_aliens and len(self.alien_bullets) < 1:
+        if shooting_aliens and random() < self.settings.alien_shoot_frequency:
             shooting_alien = choice(shooting_aliens)
             self._fire_alien_bullet(shooting_alien)
 

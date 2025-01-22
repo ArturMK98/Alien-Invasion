@@ -18,6 +18,7 @@ class Settings:
         self.bullets_allowed = 3
         self.alien_bullet_width = 50
         self.alien_bullet_height = 50
+        self.alien_shoot_frequency = 0.05
 
         # Alien settings
         self.alien_width = 70
