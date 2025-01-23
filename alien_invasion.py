@@ -1,8 +1,9 @@
 import sys
 import pygame
 from random import random
-from time import sleep
+from random import randint
 from random import choice
+from time import sleep
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
@@ -60,13 +61,18 @@ class AlienInvasion:
         self.death_effects = pygame.sprite.Group()
         self._create_fleet()
 
+
         # Start Alien Invasion in an inactive state
         self.game_active = False
         self.waiting_for_difficulty = False
         self.game_over = False
+        self.paused = False
 
-        # Make the play button
+        # Main menu buttons
         self.play_button = Button(self, "Play")
+        self.how_to_play_button_main = Button(self, "How to Play", y_offset=80)
+        self.settings_button_main = Button(self, "Settings", y_offset=160)
+        self.quit_button_main = Button(self, "Quit", y_offset=240)
 
         # Make the restart button
         self.restart_button = Button(self, "Restart")
@@ -78,6 +84,12 @@ class AlienInvasion:
         self.easy_button = Button(self, "Easy")
         self.medium_button = Button(self, "Medium", y_offset=80)
         self.hard_button = Button(self, "Hard", y_offset=160)
+
+        # Pause menu buttons
+        self.resume_button = Button(self, "Resume", y_offset=-80)
+        self.how_to_play_button = Button(self, "How to Play", y_offset=0)
+        self.settings_button = Button(self, "Settings", y_offset=80)
+        self.main_menu_button = Button(self, "Main Menu", y_offset=160)
 
         # Prepare the 'Difficulty' text
         self._prep_difficulty_text()
@@ -91,7 +103,7 @@ class AlienInvasion:
         while True:
             self._check_events()
 
-            if self.game_active:
+            if self.game_active and not self.paused:
                 self.ship.update()
                 self._update_bullets()
                 self._update_alien_bullets()
@@ -115,12 +127,61 @@ class AlienInvasion:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if not self.game_active and not self.waiting_for_difficulty and not self.game_over:
-                    self._check_play_button(mouse_pos)
+                    self._check_main_menu_buttons(mouse_pos)
                 elif self.waiting_for_difficulty:
                     self._check_difficulty_buttons(mouse_pos)
                 elif self.game_over:
                     self._check_restart_button(mouse_pos)
                     self._check_quit_button(mouse_pos)
+                elif self.paused:
+                    self._check_pause_menu_buttons(mouse_pos)
+
+
+    def _check_main_menu_buttons(self, mouse_pos):
+        """Check which main menu button was clicked"""
+        if self.play_button.rect.collidepoint(mouse_pos):
+            self.waiting_for_difficulty = True
+        elif self.how_to_play_button_main.rect.collidepoint(mouse_pos):
+            # Handle how to play button click
+            pass
+        elif self.settings_button_main.rect.collidepoint(mouse_pos):
+            # Handle settings button click
+            pass
+        elif self.quit_button_main.rect.collidepoint(mouse_pos):
+            sys.exit()
+
+
+    def _check_pause_menu_buttons(self, mouse_pos):
+        """Check which pause menu button was clicked"""
+        if self.resume_button.rect.collidepoint(mouse_pos):
+            self.paused = False
+            pygame.mouse.set_visible(False)
+        elif self.how_to_play_button.rect.collidepoint(mouse_pos):
+            # Handle how to play button click
+            pass
+        elif self.settings_button.rect.collidepoint(mouse_pos):
+            # Handle settings button click
+            pass
+        elif self.main_menu_button.rect.collidepoint(mouse_pos):
+            self._return_to_main_menu()
+
+    
+    def _return_to_main_menu(self):
+        """Return to the main menu and reset the game state"""
+        self.game_active = False
+        self.paused = False
+        self.waiting_for_difficulty = False
+        self.game_over = False
+        pygame.mouse.set_visible(True)
+        self.stats.reset_stats()
+        self.scoreboard.prep_score()
+        self.scoreboard.prep_level()
+        self.scoreboard.prep_ships()
+        self.bullets.empty()
+        self.aliens.empty()
+        self.alien_bullets.empty()
+        self.death_effects.empty()
+        self.ship.center_ship()
 
     
     def _check_play_button(self,mouse_pos=None, p_pressed=False):
@@ -156,6 +217,8 @@ class AlienInvasion:
             self.ship.moving_left = True
         elif event.key == pygame.K_SPACE and self.game_active:
             self._fire_bullet()
+        elif event.key == pygame.K_ESCAPE and self.game_active:
+            self.paused = not self.paused
         elif event.key == pygame.K_q:
             sys.exit()
         elif event.key == pygame.K_p and not self.game_active:
@@ -502,7 +565,36 @@ class AlienInvasion:
             self.restart_button.draw_button()
             self.quit_button.draw_button()
 
+        if not self.game_active and not self.waiting_for_difficulty and not self.game_over:
+            self._draw_main_menu()
+        elif self.paused:
+            self._draw_pause_menu()
+            pygame.mouse.set_visible(True)
+
         pygame.display.flip()
+
+    
+    def _draw_main_menu(self):
+        """Draw the main menu"""
+        self.play_button.draw_button()
+        self.how_to_play_button_main.draw_button()
+        self.settings_button_main.draw_button()
+        self.quit_button_main.draw_button()
+
+
+    def _draw_pause_menu(self):
+        """Draw the pause menu"""
+        font = pygame.font.SysFont('Comic Sans MS', 48)
+        pause_text = font.render("Game Paused", True, (255, 255, 255))
+        pause_rect = pause_text.get_rect()
+        pause_rect.center = self.screen.get_rect().center
+        pause_rect.y -= 200
+        self.screen.blit(pause_text, pause_rect)
+
+        self.resume_button.draw_button()
+        self.how_to_play_button.draw_button()
+        self.settings_button.draw_button()
+        self.main_menu_button.draw_button()
 
 
 if __name__ == '__main__':
