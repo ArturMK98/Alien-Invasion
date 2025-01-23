@@ -41,6 +41,8 @@ class AlienInvasion:
         
         # Load sound effects
         self.ship_shoot_sound = pygame.mixer.Sound('sound_effects/shot.mp3')
+        self.alien_death_sound = pygame.mixer.Sound('sound_effects/sparkles.mp3')
+        self.player_death_sound = pygame.mixer.Sound('sound_effects/explosion.mp3')
         self.alien_shoot_sounds = [
             pygame.mixer.Sound('sound_effects/fireball_whoosh_1.mp3'),
             pygame.mixer.Sound('sound_effects/fireball_whoosh_2.mp3')
@@ -257,6 +259,7 @@ class AlienInvasion:
                                                self.settings.alien_width, 
                                                self.settings.alien_height)
                     self.death_effects.add(death_effect)
+                    self.alien_death_sound.play()
                 self.stats.score += self.settings.alien_points * len(aliens)
             self.scoreboard.prep_score()
             self.scoreboard.check_high_score()
@@ -358,7 +361,7 @@ class AlienInvasion:
             self._reset_level()
 
             # Pause
-            #sleep(0.5)
+            sleep(1)
         else:
             self.game_active = False
             self.game_over = True
@@ -379,6 +382,7 @@ class AlienInvasion:
     
     def _pause_game_for_explosion(self):
         """Pause the game and play the explosion animation"""
+        self.player_death_sound.play()
         while any(explosion.alive() for explosion in self.death_effects):
             self.death_effects.update()
             self._update_screen()
