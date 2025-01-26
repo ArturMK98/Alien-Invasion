@@ -40,6 +40,13 @@ class AlienInvasion:
             self.bg_image, (
                 self.settings.screen_width, self.settings.screen_height))
         
+        # Load logo image
+        self.logo_image = pygame.image.load('assets/alien_invasion.bmp')
+        self.logo_image = pygame.transform.scale(self.logo_image, (600, 300))
+        self.logo_rect = self.logo_image.get_rect()
+        self.logo_rect.centerx = self.screen.get_rect().centerx
+        self.logo_rect.top = 50
+        
         # Load sound effects
         self.ship_shoot_sound = pygame.mixer.Sound('sound_effects/shot.mp3')
         self.alien_death_sound = pygame.mixer.Sound('sound_effects/sparkles.mp3')
@@ -60,6 +67,9 @@ class AlienInvasion:
         self.aliens = pygame.sprite.Group()
         self.death_effects = pygame.sprite.Group()
         self._create_fleet()
+
+        # Load custom font
+        self.font = pygame.font.Font('assets/ThaleahFat.ttf', 48)
 
 
         # Start Alien Invasion in an inactive state
@@ -502,9 +512,8 @@ class AlienInvasion:
 
     def _prep_difficulty_text(self):
         """Prepare the 'Difficulty' text"""
-        self.difficulty_font = pygame.font.SysFont('Comic Sans MS', 48)
-        self.difficulty_image = self.difficulty_font.render(
-            "Difficulty", True, (255, 255, 255))
+        self.difficulty_image = self.font.render("Difficulty", 
+                                                 True, (255, 255, 255))
         self.difficulty_rect = self.difficulty_image.get_rect()
         self.difficulty_rect.centerx = self.screen.get_rect().centerx
         self.difficulty_rect.top = self.easy_button.rect.top - 80  
@@ -512,9 +521,7 @@ class AlienInvasion:
 
     def _prep_game_over_message(self):
         """Prepare the 'Game Over' message"""
-        self.game_over_font = pygame.font.SysFont('Comic Sans MS', 60)
-        self.game_over_image = self.game_over_font.render("Game Over", 
-                                                          True, (255, 0, 0))
+        self.game_over_image = self.font.render("Game Over", True, (255, 0, 0))
         self.game_over_rect = self.game_over_image.get_rect()
         self.game_over_rect.center = self.screen.get_rect().center
         self.game_over_rect.y -= 100
@@ -535,19 +542,18 @@ class AlienInvasion:
         # Draw background image
         self.screen.blit(self.bg_image, (0,0))
 
-        for bullet in self.bullets.sprites():
-            bullet.draw_bullet()
-        for bullet in self.alien_bullets.sprites():
-            bullet.draw_bullet()
-        for death_effect in self.death_effects.sprites():
-            death_effect.draw()
-
-        self.ship.blitme()
-        
-        self.aliens.draw(self.screen)
-
-        # Draw score information
-        self.scoreboard.show_game_info()
+        if self.game_active:
+            self.ship.blitme()
+            self.aliens.draw(self.screen)
+            for bullet in self.bullets.sprites():
+                bullet.draw_bullet()
+            for bullet in self.alien_bullets.sprites():
+                bullet.draw_bullet()
+            for death_effect in self.death_effects.sprites():
+                death_effect.draw()
+                    
+            # Draw score information
+            self.scoreboard.show_game_info()
 
         # Draw play button if game is inactive and not waiting for difficulty
         if not self.game_active and not self.waiting_for_difficulty and not self.game_over:
@@ -576,6 +582,7 @@ class AlienInvasion:
     
     def _draw_main_menu(self):
         """Draw the main menu"""
+        self.screen.blit(self.logo_image, self.logo_rect) 
         self.play_button.draw_button()
         self.how_to_play_button_main.draw_button()
         self.settings_button_main.draw_button()
@@ -584,8 +591,7 @@ class AlienInvasion:
 
     def _draw_pause_menu(self):
         """Draw the pause menu"""
-        font = pygame.font.SysFont('Comic Sans MS', 48)
-        pause_text = font.render("Game Paused", True, (255, 255, 255))
+        pause_text = self.font.render("Game Paused", True, (255, 255, 255))
         pause_rect = pause_text.get_rect()
         pause_rect.center = self.screen.get_rect().center
         pause_rect.y -= 200

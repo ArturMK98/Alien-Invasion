@@ -15,7 +15,7 @@ class Scoreboard:
 
         # Font settings for scoring information
         self.text_colour = (255, 255, 255)
-        self.font = pygame.font.SysFont('Comic Sans MS', 30)
+        self.font = pygame.font.Font('assets/ThaleahFat.ttf', 30)
 
         # Prepare the initial score image
         self.prep_score()
