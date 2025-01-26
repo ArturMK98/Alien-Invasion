@@ -13,6 +13,7 @@ from death_effect import DeathEffect
 from game_stats import GameStats
 from scoreboard import Scoreboard
 from button import Button
+from slider import Slider
 
 
 class AlienInvasion:
@@ -79,12 +80,18 @@ class AlienInvasion:
         self.game_over = False
         self.paused = False
         self.how_to_play_screen = False
+        self.showing_settings = False
 
         # Main menu buttons
         self.play_button = Button(self, "Play")
         self.how_to_play_button = Button(self, "How to Play", y_offset=80)
         self.settings_button_main = Button(self, "Settings", y_offset=160)
         self.quit_button_main = Button(self, "Quit", y_offset=240)
+
+        # Settings menu buttons and sliders
+        self.volume_slider = Slider(self, "Volume", y_offset=80)
+        self.resolution_button = Button(self, "Resolution", y_offset=240)
+        self.back_button_settings = Button(self, "Back", y_offset=320)
 
         # How to Play screen buttons
         self.back_button = Button(self, "Back", y_offset=240)
@@ -151,6 +158,8 @@ class AlienInvasion:
                     self._check_pause_menu_buttons(mouse_pos)
                 elif self.how_to_play_screen:
                     self._check_how_to_play_buttons(mouse_pos)
+                elif self.showing_settings:
+                    self._check_settings_buttons(mouse_pos)
 
 
     def _check_main_menu_buttons(self, mouse_pos):
@@ -161,10 +170,22 @@ class AlienInvasion:
             self.how_to_play_screen = True
             pass
         elif self.settings_button_main.rect.collidepoint(mouse_pos):
-            # Handle settings button click
+            self.showing_settings = True
             pass
         elif self.quit_button_main.rect.collidepoint(mouse_pos):
             sys.exit()
+
+    
+    def _check_settings_buttons(self, mouse_pos):
+        """Check which button was clicked on the settings menu"""
+        if self.back_button_settings.rect.collidepoint(mouse_pos):
+            self.showing_settings = False
+        elif self.volume_slider.rect.collidepoint(mouse_pos):
+            # Handle volume slider adjustment
+            pass
+        elif self.resolution_button.rect.collidepoint(mouse_pos):
+            # Handle resolution button click
+            pass
 
 
     def _check_how_to_play_buttons(self, mouse_pos):
@@ -579,11 +600,14 @@ class AlienInvasion:
             self.restart_button.draw_button()
             self.quit_button.draw_button()
 
-        if not self.game_active and not self.waiting_for_difficulty and not self.game_over and not self.how_to_play_screen:
+        if not self.game_active and not self.waiting_for_difficulty and not self.game_over and not self.how_to_play_screen and not self.showing_settings:
             self._draw_main_menu()
         elif self.paused:
             self._draw_pause_menu()
             pygame.mouse.set_visible(True)
+
+        if self.showing_settings:
+            self._draw_settings_menu()
 
         if self.how_to_play_screen:
             self._draw_how_to_play()
@@ -669,7 +693,25 @@ class AlienInvasion:
 
         self.back_button.draw_button()
 
+    
+    def _draw_settings_menu(self):
+        """Draw the settings menu"""
+        self.screen.blit(self.bg_image, (0, 0))
 
+        # Title
+        title_text = self.font.render("Settings", True, (255, 255, 255))
+        title_rect = title_text.get_rect()
+        title_rect.centerx = self.screen.get_rect().centerx
+        title_rect.top = 50
+        self.screen.blit(title_text, title_rect)
+
+        # Draw settings options
+        self.volume_slider.draw_slider()
+        self.difficulty_button.draw_button()
+        self.resolution_button.draw_button()
+        self.back_button_settings.draw_button()
+
+    
     def _draw_pause_menu(self):
         """Draw the pause menu"""
         pause_text = self.font.render("Game Paused", True, (255, 255, 255))
