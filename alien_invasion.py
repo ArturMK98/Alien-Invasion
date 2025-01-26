@@ -555,7 +555,7 @@ class AlienInvasion:
     def _prep_difficulty_text(self):
         """Prepare the 'Difficulty' text"""
         self.difficulty_image = self.font.render("Difficulty", 
-                                                 True, (255, 255, 255))
+                                                 True, (255, 255, 0))
         self.difficulty_rect = self.difficulty_image.get_rect()
         self.difficulty_rect.centerx = self.screen.get_rect().centerx
         self.difficulty_rect.top = self.easy_button.rect.top - 80  
@@ -713,7 +713,7 @@ class AlienInvasion:
         self.screen.blit(self.bg_image, (0, 0))
 
         # Title
-        title_text = self.font.render("Settings", True, (255, 255, 255))
+        title_text = self.font.render("Settings", True, (255, 255, 0))
         title_rect = title_text.get_rect()
         title_rect.centerx = self.screen.get_rect().centerx
         title_rect.top = 50
@@ -727,7 +727,7 @@ class AlienInvasion:
     
     def _draw_pause_menu(self):
         """Draw the pause menu"""
-        pause_text = self.font.render("Game Paused", True, (255, 255, 255))
+        pause_text = self.font.render("Game Paused", True, (255, 255, 0))
         pause_rect = pause_text.get_rect()
         pause_rect.center = self.screen.get_rect().center
         pause_rect.y -= 200

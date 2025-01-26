@@ -20,7 +20,7 @@ class Slider:
         self.slider_color = (200, 200, 200)
         self.knob_color = (100, 100, 100)
         self.label_color = (255, 255, 255)
-        self.font = pygame.font.Font(None, 36)
+        self.font = pygame.font.Font('assets/ThaleahFat.ttf', 36)
 
         # Position the slider
         self.rect = pygame.Rect(0, 0, self.width, self.height)
@@ -45,6 +45,14 @@ class Slider:
         pygame.draw.rect(self.screen, self.slider_color, self.rect)
         pygame.draw.rect(self.screen, self.knob_color, self.knob_rect)
         self.screen.blit(self.label_image, self.label_rect)
+
+        # Draw the volume percentage above the slider
+        volume_percentage = f"{int(self.get_value())}%"
+        volume_text = self.font.render(volume_percentage, True, self.label_color)
+        volume_rect = volume_text.get_rect()
+        volume_rect.centerx = self.rect.centerx
+        volume_rect.bottom = self.label_rect.top + 100
+        self.screen.blit(volume_text, volume_rect)
 
     def handle_event(self, event):
         """Handle mouse events for the slider"""
