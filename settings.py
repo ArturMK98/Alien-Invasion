@@ -15,10 +15,8 @@ class Settings:
         # Bullet settings
         self.bullet_width = 20
         self.bullet_height = 60
-        self.bullets_allowed = 3
         self.alien_bullet_width = 50
         self.alien_bullet_height = 50
-        self.alien_shoot_frequency = 0.05
 
         # Alien settings
         self.alien_width = 70
@@ -40,20 +38,15 @@ class Settings:
     
     def initialize_dynamic_settings(self):
         """Initialize settings that change throughout the game"""
-        self.ship_speed = 3.5
-        self.bullet_speed = 4.5
-        self.alien_speed = 2.5
+        self.ship_speed = 4.5
+        self.bullet_speed = 5.5
 
         # Fleet direction of 1 represents right; -1 represents left
         self.fleet_direction = 1
 
         # Scoring settings
         self.alien_points = 50
-
-        # Difficulty setting
-        self.difficulty = 'medium'
         
-
     def increase_values(self):
         """Increase speed settings and alien point values"""
         self.ship_speed *= self.speedup_scale
@@ -66,15 +59,21 @@ class Settings:
         """Set settings for easy mode"""
         self.alien_speed = 2.0
         self.difficulty = 'easy'
+        self.bullets_allowed = 3
+        self.alien_shoot_frequency = 0.01
         
 
     def set_medium_mode(self):
         """Set settings for medium mode"""
-        self.alien_speed = 4.0
+        self.alien_speed = 2.5
         self.difficulty = 'medium'
+        self.bullets_allowed = 2
+        self.alien_shoot_frequency = 0.03
 
 
     def set_hard_mode(self):
         """Set settings for hard mode"""
-        self.alien_speed = 6.0
+        self.alien_speed = 3.0
         self.difficulty = 'hard'
+        self.bullets_allowed = 1
+        self.alien_shoot_frequency = 0.5

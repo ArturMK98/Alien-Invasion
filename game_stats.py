@@ -16,7 +16,8 @@ class GameStats:
         self.ships_left = self.settings.ship_limit
         self.score = 0
         self.level = 1
-
+        self.settings.alien_height = 70
+        self.settings.alien_width = 70
 
     def load_high_scores(self):
         """Load the high scores from a JSON file."""

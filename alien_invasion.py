@@ -70,6 +70,7 @@ class AlienInvasion:
 
         # Load custom font
         self.font = pygame.font.Font('assets/ThaleahFat.ttf', 48)
+        self.small_font = pygame.font.Font('assets/ThaleahFat.ttf', 34)
 
 
         # Start Alien Invasion in an inactive state
@@ -77,12 +78,16 @@ class AlienInvasion:
         self.waiting_for_difficulty = False
         self.game_over = False
         self.paused = False
+        self.how_to_play_screen = False
 
         # Main menu buttons
         self.play_button = Button(self, "Play")
-        self.how_to_play_button_main = Button(self, "How to Play", y_offset=80)
+        self.how_to_play_button = Button(self, "How to Play", y_offset=80)
         self.settings_button_main = Button(self, "Settings", y_offset=160)
         self.quit_button_main = Button(self, "Quit", y_offset=240)
+
+        # How to Play screen buttons
+        self.back_button = Button(self, "Back", y_offset=240)
 
         # Make the restart button
         self.restart_button = Button(self, "Restart")
@@ -97,9 +102,8 @@ class AlienInvasion:
 
         # Pause menu buttons
         self.resume_button = Button(self, "Resume", y_offset=-80)
-        self.how_to_play_button = Button(self, "How to Play", y_offset=0)
-        self.settings_button = Button(self, "Settings", y_offset=80)
-        self.main_menu_button = Button(self, "Main Menu", y_offset=160)
+        self.settings_button = Button(self, "Settings", y_offset=0)
+        self.main_menu_button = Button(self, "Main Menu", y_offset=80)
 
         # Prepare the 'Difficulty' text
         self._prep_difficulty_text()
@@ -136,7 +140,7 @@ class AlienInvasion:
                 self._check_keyup_events(event)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if not self.game_active and not self.waiting_for_difficulty and not self.game_over:
+                if not self.game_active and not self.waiting_for_difficulty and not self.game_over and not self.how_to_play_screen:
                     self._check_main_menu_buttons(mouse_pos)
                 elif self.waiting_for_difficulty:
                     self._check_difficulty_buttons(mouse_pos)
@@ -145,14 +149,16 @@ class AlienInvasion:
                     self._check_quit_button(mouse_pos)
                 elif self.paused:
                     self._check_pause_menu_buttons(mouse_pos)
+                elif self.how_to_play_screen:
+                    self._check_how_to_play_buttons(mouse_pos)
 
 
     def _check_main_menu_buttons(self, mouse_pos):
         """Check which main menu button was clicked"""
         if self.play_button.rect.collidepoint(mouse_pos):
             self.waiting_for_difficulty = True
-        elif self.how_to_play_button_main.rect.collidepoint(mouse_pos):
-            # Handle how to play button click
+        elif self.how_to_play_button.rect.collidepoint(mouse_pos):
+            self.how_to_play_screen = True
             pass
         elif self.settings_button_main.rect.collidepoint(mouse_pos):
             # Handle settings button click
@@ -161,14 +167,17 @@ class AlienInvasion:
             sys.exit()
 
 
+    def _check_how_to_play_buttons(self, mouse_pos):
+        """Check which button was clicked on the 'How to Play' screen"""
+        if self.back_button.rect.collidepoint(mouse_pos):
+            self.how_to_play_screen = False
+
+
     def _check_pause_menu_buttons(self, mouse_pos):
         """Check which pause menu button was clicked"""
         if self.resume_button.rect.collidepoint(mouse_pos):
             self.paused = False
             pygame.mouse.set_visible(False)
-        elif self.how_to_play_button.rect.collidepoint(mouse_pos):
-            # Handle how to play button click
-            pass
         elif self.settings_button.rect.collidepoint(mouse_pos):
             # Handle settings button click
             pass
@@ -345,6 +354,9 @@ class AlienInvasion:
 
             # Increase level
             self.stats.level += 1
+            if self.settings.alien_width > 40 and self.settings.alien_height > 40:
+                self.settings.alien_width -= 5
+                self.settings.alien_height -= 5
             self.scoreboard.prep_level()
 
 
@@ -430,11 +442,7 @@ class AlienInvasion:
             # Decrement ships left and update scoreboard
             self.stats.ships_left -= 1
             self.scoreboard.prep_ships()
-
-            self._reset_level()
-
-            # Pause
-            sleep(1)
+            self.ship.center_ship()
         else:
             self.game_active = False
             self.game_over = True
@@ -506,7 +514,7 @@ class AlienInvasion:
         alien_width = alien.rect.width
         alien.x = alien_width + 2 * alien_width * alien_number
         alien.rect.x = alien.x
-        alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
+        alien.rect.y = alien.rect.height + 1.5 * alien.rect.height * row_number
         self.aliens.add(alien)
     
 
@@ -571,11 +579,14 @@ class AlienInvasion:
             self.restart_button.draw_button()
             self.quit_button.draw_button()
 
-        if not self.game_active and not self.waiting_for_difficulty and not self.game_over:
+        if not self.game_active and not self.waiting_for_difficulty and not self.game_over and not self.how_to_play_screen:
             self._draw_main_menu()
         elif self.paused:
             self._draw_pause_menu()
             pygame.mouse.set_visible(True)
+
+        if self.how_to_play_screen:
+            self._draw_how_to_play()
 
         pygame.display.flip()
 
@@ -584,9 +595,79 @@ class AlienInvasion:
         """Draw the main menu"""
         self.screen.blit(self.logo_image, self.logo_rect) 
         self.play_button.draw_button()
-        self.how_to_play_button_main.draw_button()
+        self.how_to_play_button.draw_button()
         self.settings_button_main.draw_button()
         self.quit_button_main.draw_button()
+
+
+    def _draw_how_to_play(self):
+        """Draw the 'How to Play' screen"""
+        self.screen.blit(self.bg_image, (0, 0))
+
+        # Title
+        title_text = self.font.render("How to Play", True, (255, 255, 0))
+        title_rect = title_text.get_rect()
+        title_rect.centerx = self.screen.get_rect().centerx
+        title_rect.top = 100
+        self.screen.blit(title_text, title_rect)
+
+        # Objective
+        objective_text = self.small_font.render("Destroy the fleet of aliens before they reach the bottom of the screen", True, (255, 255, 255))
+        objective_rect = objective_text.get_rect()
+        objective_rect.centerx = self.screen.get_rect().centerx
+        objective_rect.top = 150
+        self.screen.blit(objective_text, objective_rect)
+
+        objective_text = self.small_font.render("Don't let the aliens destroy your spaceship", True, (255, 255, 255))
+        objective_rect = objective_text.get_rect()
+        objective_rect.centerx = self.screen.get_rect().centerx
+        objective_rect.top = 190
+        self.screen.blit(objective_text, objective_rect)
+
+        objective_text2 = self.small_font.render("Alien speed and fleet size increases as you progress through the levels", True, (255, 255, 255))
+        objective_rect2 = objective_text2.get_rect()
+        objective_rect2.centerx = self.screen.get_rect().centerx
+        objective_rect2.top = 230
+        self.screen.blit(objective_text2, objective_rect2)
+
+        # Controls
+        controls_text = self.font.render("Controls", True, (255, 255, 0))
+        controls_rect = controls_text.get_rect()
+        controls_rect.centerx = self.screen.get_rect().centerx
+        controls_rect.top = 300
+        self.screen.blit(controls_text, controls_rect)
+
+        move_left_text = self.small_font.render("Move Left - Left Arrow Key", True, (255, 255, 255))
+        move_left_rect = move_left_text.get_rect()
+        move_left_rect.centerx = self.screen.get_rect().centerx
+        move_left_rect.top = 340
+        self.screen.blit(move_left_text, move_left_rect)
+
+        move_right_text = self.small_font.render("Move Right - Right Arrow Key", True, (255, 255, 255))
+        move_right_rect = move_right_text.get_rect()
+        move_right_rect.centerx = self.screen.get_rect().centerx
+        move_right_rect.top = 380
+        self.screen.blit(move_right_text, move_right_rect)
+
+        shoot_text = self.small_font.render("Shoot - Spacebar", True, (255, 255, 255))
+        shoot_rect = shoot_text.get_rect()
+        shoot_rect.centerx = self.screen.get_rect().centerx
+        shoot_rect.top = 420
+        self.screen.blit(shoot_text, shoot_rect)
+
+        pause_text = self.small_font.render("Pause - Escape", True, (255, 255, 255))
+        pause_rect = pause_text.get_rect()
+        pause_rect.centerx = self.screen.get_rect().centerx
+        pause_rect.top = 460
+        self.screen.blit(pause_text, pause_rect)
+
+        quit_text = self.small_font.render('Press "q" at any time to close the game', True, (255, 255, 255))
+        quit_rect = quit_text.get_rect()
+        quit_rect.centerx = self.screen.get_rect().centerx
+        quit_rect.top = 500
+        self.screen.blit(quit_text, quit_rect)
+
+        self.back_button.draw_button()
 
 
     def _draw_pause_menu(self):
