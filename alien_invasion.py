@@ -118,6 +118,18 @@ class AlienInvasion:
         # Game over message
         self._prep_game_over_message()
 
+        # Set initial volume based on slider value
+        self._set_volume()
+
+
+    def _set_volume(self):
+        """Set the volume based on the slider value"""
+        volume = self.volume_slider.get_value() / 100  # Normalize to 0.0 - 1.0
+        pygame.mixer.music.set_volume(volume)
+        for sound in [self.ship_shoot_sound, self.alien_death_sound, self.player_death_sound] + self.alien_shoot_sounds:
+            sound.set_volume(volume)
+            print(volume)
+
     
     def run_game(self):
         """Start the main loop for the game"""
@@ -147,7 +159,7 @@ class AlienInvasion:
                 self._check_keyup_events(event)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if not self.game_active and not self.waiting_for_difficulty and not self.game_over and not self.how_to_play_screen:
+                if not self.game_active and not self.waiting_for_difficulty and not self.game_over and not self.how_to_play_screen and not self.showing_settings:
                     self._check_main_menu_buttons(mouse_pos)
                 elif self.waiting_for_difficulty:
                     self._check_difficulty_buttons(mouse_pos)
@@ -160,6 +172,9 @@ class AlienInvasion:
                     self._check_how_to_play_buttons(mouse_pos)
                 elif self.showing_settings:
                     self._check_settings_buttons(mouse_pos)
+            elif event.type == pygame.MOUSEMOTION or event.type == pygame.MOUSEBUTTONUP:
+                if self.showing_settings:
+                    self.volume_slider.handle_event(event)
 
 
     def _check_main_menu_buttons(self, mouse_pos):
@@ -168,10 +183,8 @@ class AlienInvasion:
             self.waiting_for_difficulty = True
         elif self.how_to_play_button.rect.collidepoint(mouse_pos):
             self.how_to_play_screen = True
-            pass
         elif self.settings_button_main.rect.collidepoint(mouse_pos):
             self.showing_settings = True
-            pass
         elif self.quit_button_main.rect.collidepoint(mouse_pos):
             sys.exit()
 
@@ -181,8 +194,8 @@ class AlienInvasion:
         if self.back_button_settings.rect.collidepoint(mouse_pos):
             self.showing_settings = False
         elif self.volume_slider.rect.collidepoint(mouse_pos):
-            # Handle volume slider adjustment
-            pass
+            self.volume_slider.handle_event(
+                pygame.event.Event(pygame.MOUSEBUTTONDOWN, pos=mouse_pos))
         elif self.resolution_button.rect.collidepoint(mouse_pos):
             # Handle resolution button click
             pass
@@ -608,6 +621,7 @@ class AlienInvasion:
 
         if self.showing_settings:
             self._draw_settings_menu()
+            self._set_volume()
 
         if self.how_to_play_screen:
             self._draw_how_to_play()
@@ -707,7 +721,6 @@ class AlienInvasion:
 
         # Draw settings options
         self.volume_slider.draw_slider()
-        self.difficulty_button.draw_button()
         self.resolution_button.draw_button()
         self.back_button_settings.draw_button()
 
