@@ -12,7 +12,7 @@ class Slider:
         self.label = label
         self.min_value = min_value
         self.max_value = max_value
-        self.value = max_value # Volume set to max by default
+        self.value = max_value
 
         # Slider dimensions
         self.width = 300
