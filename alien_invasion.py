@@ -108,8 +108,7 @@ class AlienInvasion:
         self.hard_button = Button(self, "Hard", y_offset=160)
 
         # Pause menu buttons
-        self.resume_button = Button(self, "Resume", y_offset=-80)
-        self.settings_button = Button(self, "Settings", y_offset=0)
+        self.resume_button = Button(self, "Resume", y_offset=-0)
         self.main_menu_button = Button(self, "Main Menu", y_offset=80)
 
         # Prepare the 'Difficulty' text
@@ -128,7 +127,6 @@ class AlienInvasion:
         pygame.mixer.music.set_volume(volume)
         for sound in [self.ship_shoot_sound, self.alien_death_sound, self.player_death_sound] + self.alien_shoot_sounds:
             sound.set_volume(volume)
-            print(volume)
 
     
     def run_game(self):
@@ -212,9 +210,6 @@ class AlienInvasion:
         if self.resume_button.rect.collidepoint(mouse_pos):
             self.paused = False
             pygame.mouse.set_visible(False)
-        elif self.settings_button.rect.collidepoint(mouse_pos):
-            # Handle settings button click
-            pass
         elif self.main_menu_button.rect.collidepoint(mouse_pos):
             self._return_to_main_menu()
 
@@ -597,10 +592,6 @@ class AlienInvasion:
             # Draw score information
             self.scoreboard.show_game_info()
 
-        # Draw play button if game is inactive and not waiting for difficulty
-        if not self.game_active and not self.waiting_for_difficulty and not self.game_over:
-            self.play_button.draw_button()
-
         # Draw difficulty level buttons if waiting for difficulty
         if self.waiting_for_difficulty:
             self._draw_difficulty_text()
@@ -730,12 +721,10 @@ class AlienInvasion:
         pause_text = self.font.render("Game Paused", True, (255, 255, 0))
         pause_rect = pause_text.get_rect()
         pause_rect.center = self.screen.get_rect().center
-        pause_rect.y -= 200
+        pause_rect.y -= 150
         self.screen.blit(pause_text, pause_rect)
 
         self.resume_button.draw_button()
-        self.how_to_play_button.draw_button()
-        self.settings_button.draw_button()
         self.main_menu_button.draw_button()
 
 
