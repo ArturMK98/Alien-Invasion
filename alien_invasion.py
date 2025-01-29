@@ -26,18 +26,6 @@ class AlienInvasion:
         self.clock = pygame.time.Clock()
         self.settings = Settings()
 
-        # Define available resolutions
-        self.available_resolutions = [
-            (800, 600),
-            (1024, 768),
-            (1280, 720),
-            (1920, 1080)
-        ]
-        self.current_resolution_index = 0
-
-        # Set initial resolution
-        self._apply_resolution()
-
         # Play the game in fullscreen
         # self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         # self.settings.screen_width = self.screen.get_rect().width
@@ -132,30 +120,6 @@ class AlienInvasion:
         # Set initial volume based on slider value
         self._set_volume()
 
-    
-    def _apply_resolution(self):
-        """Apply the current resolution"""
-        resolution = self.available_resolutions[self.current_resolution_index]
-        self.settings.screen_width, self.settings.screen_height = resolution
-        self.screen = pygame.display.set_mode(resolution)
-
-
-    def _apply_resolution(self):
-        """Apply the current resolution"""
-        resolution = self.available_resolutions[self.current_resolution_index]
-        self.settings.screen_width, self.settings.screen_height = resolution
-        self.screen = pygame.display.set_mode(resolution)
-
-        # Update the background image to fit the new resolution
-        self.bg_image = pygame.image.load('assets/background.bmp')
-        self.bg_image = pygame.transform.scale(
-            self.bg_image, (
-                self.settings.screen_width, self.settings.screen_height))
-
-        # Update the logo position
-        self.logo_rect.centerx = self.screen.get_rect().centerx
-        self.logo_rect.top = 50
-
 
     def _set_volume(self):
         """Set the volume based on the slider value"""
@@ -231,13 +195,8 @@ class AlienInvasion:
             self.volume_slider.handle_event(
                 pygame.event.Event(pygame.MOUSEBUTTONDOWN, pos=mouse_pos))
         elif self.resolution_button.rect.collidepoint(mouse_pos):
-            self._cycle_resolution()
-
-    
-    def _cycle_resolution(self):
-        """Cycle through the available resolutions"""
-        self.current_resolution_index = (self.current_resolution_index + 1) % len(self.available_resolutions)
-        self._apply_resolution()
+            # Handle resolution button click
+            pass
 
 
     def _check_how_to_play_buttons(self, mouse_pos):
