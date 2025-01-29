@@ -1,9 +1,7 @@
 import sys
 import pygame
 from random import random
-from random import randint
 from random import choice
-from time import sleep
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
@@ -90,7 +88,6 @@ class AlienInvasion:
 
         # Settings menu buttons and sliders
         self.volume_slider = Slider(self, "Volume", y_offset=80)
-        self.resolution_button = Button(self, "Resolution", y_offset=240)
         self.back_button_settings = Button(self, "Back", y_offset=320)
 
         # How to Play screen buttons
@@ -194,9 +191,6 @@ class AlienInvasion:
         elif self.volume_slider.rect.collidepoint(mouse_pos):
             self.volume_slider.handle_event(
                 pygame.event.Event(pygame.MOUSEBUTTONDOWN, pos=mouse_pos))
-        elif self.resolution_button.rect.collidepoint(mouse_pos):
-            # Handle resolution button click
-            pass
 
 
     def _check_how_to_play_buttons(self, mouse_pos):
@@ -712,7 +706,6 @@ class AlienInvasion:
 
         # Draw settings options
         self.volume_slider.draw_slider()
-        self.resolution_button.draw_button()
         self.back_button_settings.draw_button()
 
     
